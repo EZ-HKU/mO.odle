@@ -41,11 +41,13 @@ chrome.storage.sync.get("course_list", (data) => {
 
 add_btn.addEventListener("click", function () {
     if (course_input.value === "") {
+        // alert("Please input course code!")
         return;
     }
+    var code = course_input.value.toUpperCase();
     chrome.storage.sync.set({ change_flag: true });
-    course_list.push(course_input.value);
-    add_new_p(course_input.value);
+    course_list.push(code);
+    add_new_p(code);
     chrome.storage.sync.set({ course_list: course_list });
 });
 
@@ -74,6 +76,7 @@ function addDiv(course_code) {
     var text_p = document.createElement("p");
     text_p.innerText = course_code;
     text_p.style.margin= "5px 0 5px 5px";
+    text_p.style.fontSize = "14px";
     var ipt_detail = document.createElement("input");
     var ipt_url = document.createElement("input");
     ipt_detail.classList.add("input");

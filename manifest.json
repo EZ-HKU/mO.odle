@@ -1,15 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "mO.odle ",
+  "name": "mO.odle",
   "version": "1.0",
-  "description": "Make Moodle convenient again!",
+  "description": "Make Moodle great again!",
   "content_scripts": [
     {
       "js": [
-        "content.js"
+        "./js/content.js"
       ],
       "css": [
-        "styles.css"
+        "./css/styles.css"
       ],
       "matches": [
         "https://moodle.hku.hk/"
@@ -19,5 +19,10 @@
   "action": {
     "default_popup": "popup.html"
   }, 
-  "permissions": ["activeTab", "storage"]
+  "permissions": ["activeTab", "storage"], 
+  "icons": {
+    "16": "./images/icon.png",
+    "48": "./images/icon.png",
+    "128": "./images/icon.png"
+  }
 }
