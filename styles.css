@@ -1,0 +1,183 @@
+/* From Uiverse.io by Prince4fff */
+
+.card p {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 20px;
+    color: #666;
+}
+
+.card p.small {
+    font-size: 14px;
+}
+
+.go-corner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+    top: 0;
+    right: 0;
+    border-radius: 0 4px 0 35px;
+    /* 0 4px 0 32px */
+}
+
+.go-arrow {
+    margin-top: -4px;
+    margin-right: -4px;
+    color: white;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.card2 {
+    display: block;
+    top: 0px;
+    position: relative;
+    width: 160px;
+    /* 262px */
+    background-color: #f8faff;
+    /* #f2f8f9 */
+    border-radius: 4px;
+    padding: 20px;
+    margin: 8px;
+    text-decoration: none;
+    z-index: 0;
+    overflow: hidden;
+    border: 1px solid #f8faff;
+    transition: all 0.2s ease-out;
+}
+
+.card2:hover {
+    box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
+    top: -4px;
+    border: 1px solid #ccc;
+    background-color: white;
+}
+
+.card2:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -16px;
+    right: -16px;
+    height: 32px;
+    width: 32px;
+    border-radius: 32px;
+    transform: scale(2);
+    transform-origin: 50% 50%;
+    transition: transform 0.15s ease-out;
+    background: #f8faff;
+    /* #f2f8f9 */
+    transition: all 0.2s ease-out;
+
+}
+
+.card2:hover:before {
+    background: #375592;
+    /* #00838d */
+    transform: scale(2.15);
+}
+
+
+/* From Uiverse.io by jjiubs */
+.input {
+    border: 2px solid transparent;
+    width: 120px;
+    height: 25px;
+    padding-left: 0.8em;
+    margin: 3px 10px 3px 0;
+    outline: none;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 10px;
+    transition: all 0.5s;
+}
+
+.input:hover,
+.input:focus {
+    border: 2px solid #aabccd;
+    box-shadow: 0px 0px 0px 4px rgba(133, 164, 193, 0.2);
+    background-color: white;
+}
+
+
+
+/* From Uiverse.io by Custyyyy */
+.btn {
+    height: 25px;
+    /* width: 40px; */
+    width: 25px;
+    align-items: center;
+    background-color: #FFFFFF;
+    border: 0px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    box-shadow: rgba(0, 0, 0, 0.08) 0 1px 5px 0;
+    box-sizing: border-box;
+    color: rgba(0, 0, 0, 0.85);
+    cursor: pointer;
+    display: inline-flex;
+    /* font-family: system-ui, -apple-system, system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif; */
+    font-size: 18px;
+    font-weight: 700;
+    justify-content: center;
+    /* line-height: 1.25; */
+    /* min-height: 3rem; */
+    /* padding: calc(.875rem - 1px) calc(1.5rem - 1px); */
+    text-decoration: none;
+    transition: all 250ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
+    /* width: auto; */
+}
+
+.btn:hover,
+.btn:focus {
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+    color: rgba(0, 0, 0, 0.65);
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    background-color: #F0F0F1;
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
+    color: rgba(0, 0, 0, 0.65);
+    transform: translateY(0);
+}
+
+#outer {
+    width: 220px;
+    background-color: #ffffff;
+    padding: 10px;
+}
+
+.del-btn {
+    padding-left: 5.5px;
+    padding-bottom: 3.5px;
+}
+
+.add-btn {
+    padding-left: 6.5px;
+}
+
+p,
+span {
+    margin-left: 5px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.dashed-line {
+    border-top: 1px dashed #000;
+    width: 100%;
+    margin: 15px 0 10px 0;
+}

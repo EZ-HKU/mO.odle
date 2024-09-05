@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "mO.odle ",
+  "version": "1.0",
+  "description": "Make Moodle convenient again!",
+  "content_scripts": [
+    {
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "matches": [
+        "https://moodle.hku.hk/"
+      ]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }, 
+  "permissions": ["activeTab", "storage"]
+}
