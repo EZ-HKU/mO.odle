@@ -19,7 +19,7 @@
   "action": {
     "default_popup": "popup.html"
   }, 
-  "permissions": ["activeTab", "storage"], 
+  "permissions": ["storage"], 
   "icons": {
     "16": "./images/icon.png",
     "48": "./images/icon.png",
