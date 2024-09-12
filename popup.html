@@ -10,21 +10,48 @@
 
 <body>
     <div id="outer">
-        <h2 style="margin-top: 0px;">mO.odle</h2>
+        <h1 style="margin-top: 0px;">mO.odle</h1>
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <input class="input" type="text" name="your course" id="course_input" placeholder="Code">
-            <button id="add_btn" class="btn add-btn">+</button>
+            <button id="add_btn" class="my-btn add-btn">+</button>
         </div>
 
         <div id="course_list_div">
         </div>
+
+        <div class="dashed-line"></div>
+
+        <button class="my-btn" id="expand_btn">/</button>
+        <div id="psb_course_list_div">
+        </div>
+
         <div class="dashed-line"></div>
         <div style="font-size: 15px; margin-bottom: 10px; font-weight: 700;">Uncaptured courses: </div>
         <div id="container">
         </div>
 
         <div style="margin-top: 20px; text-align: right; ">
-            <a href="https://github.com/Karis004/mO.odle" target="_blank"  style="color: black;">Feedback</a>
+            <a href="https://github.com/Karis004/mO.odle" target="_blank" style="color: black;">Feedback</a>
+            <br>
+            <div id="help" style="text-decoration: underline;">
+                Help
+                <a id="help_text">
+                    添加课程：
+                    <br>Method1 输入课程代码
+                    <br>Method2 第二栏为该学年课程列表
+                    <br>Method3 “My Courses”页面（输入栏为空时点击+可自动跳转）
+                    <br>
+                    <br>Uncaptured courses：
+                    <br>通过Method1添加的课程可能会无法捕获（需手动添加）
+                    <br>
+                    <br>其他：
+                    <br>Q: 添加课程后首页/侧边栏未显示？
+                    <br>请检查课程代码是否正确，或在尝试在首页刷新
+                    <br>大部分问题都可以被刷新解决
+                    <br>
+                    <br>欢迎在Github提出issue或pr！
+                </a>
+            </div>
         </div>
     </div>
 

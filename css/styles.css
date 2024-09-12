@@ -26,8 +26,8 @@
 }
 
 .go-arrow {
-    margin-top: -4px;
-    margin-right: -4px;
+    margin-top: -11px;
+    margin-right: -8px;
     color: white;
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
@@ -36,12 +36,12 @@
     display: block;
     top: 0px;
     position: relative;
-    width: 160px;
+    width: 140px;
     /* 262px */
     background-color: #f8faff;
     /* #f2f8f9 */
     border-radius: 4px;
-    padding: 20px;
+    padding: 15px;
     margin: 8px;
     text-decoration: none;
     z-index: 0;
@@ -63,8 +63,8 @@
     z-index: -1;
     top: -16px;
     right: -16px;
-    height: 32px;
-    width: 32px;
+    height: 28px;
+    width: 28px;
     border-radius: 32px;
     transform: scale(2);
     transform-origin: 50% 50%;
@@ -106,7 +106,7 @@
 
 
 /* From Uiverse.io by Custyyyy */
-.btn {
+.my-btn {
     height: 25px;
     /* width: 40px; */
     width: 25px;
@@ -135,18 +135,18 @@
     /* width: auto; */
 }
 
-.btn:hover,
-.btn:focus {
+.my-btn:hover,
+.my-btn:focus {
     border-color: rgba(0, 0, 0, 0.15);
     box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
     color: rgba(0, 0, 0, 0.65);
 }
 
-.btn:hover {
+.my-btn:hover {
     transform: translateY(-1px);
 }
 
-.btn:active {
+.my-btn:active {
     background-color: #F0F0F1;
     border-color: rgba(0, 0, 0, 0.15);
     box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
@@ -180,4 +180,90 @@ span {
     border-top: 1px dashed #000;
     width: 100%;
     margin: 15px 0 10px 0;
+}
+
+
+
+/* Course Page CSS */
+.course_text {
+    height: 30px;
+    margin: 5px 7px;
+    padding-inline: 10px;
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 0px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5%;
+    box-shadow: rgba(0, 0, 0, 0.08) 0 1px 5px 0;
+    box-sizing: border-box;
+    color: rgba(0, 0, 0, 0.85);
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    color: rgb(85, 85, 85);
+    text-decoration: none;
+    transition: all 250ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
+    overflow: hidden;
+}
+
+.course_text:hover,
+.course_text:focus {
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+    color: rgba(0, 0, 0, 0.65);
+}
+
+.course_text:hover {
+    transform: translateY(-1px);
+}
+
+.course_text:active {
+    background-color: #F0F0F1;
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
+    color: rgba(0, 0, 0, 0.65);
+    transform: translateY(0);
+}
+
+#psb_course_list_div{
+    overflow: hidden;
+    height: 0;
+    transition: 0.3s ease-out;
+}
+
+
+#help {
+    position: relative;
+    display: inline-block;
+}
+
+#help_text {
+    font-family: 'Microsoft YaHei', 'SimSun', 'Arial', sans-serif;
+    font-size: small;
+    visibility: hidden;
+    position: absolute;
+    text-align: left;
+    right: 0;
+    bottom: 0;
+    width: 200px;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1;
+}
+
+#help:hover #help_text {
+    opacity: 1;
+    visibility: visible;
 }

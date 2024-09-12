@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "mO.odle",
-  "version": "1.0",
+  "version": "2.0",
   "description": "Make Moodle great again!",
   "content_scripts": [
     {
@@ -12,14 +12,18 @@
         "./css/styles.css"
       ],
       "matches": [
-        "https://moodle.hku.hk/"
-      ]
+        "https://moodle.hku.hk/", 
+        "https://moodle.hku.hk/course/view.php?id=*", 
+        "https://moodle.hku.hk/my/courses.php", 
+        "https://moodle.hku.hk/mod/*/view.php?id=*"
+      ], 
+      "type": "module"
     }
   ],
   "action": {
     "default_popup": "popup.html"
   }, 
-  "permissions": ["storage"], 
+  "permissions": ["storage", "tabs", "activeTab"], 
   "icons": {
     "16": "./images/icon.png",
     "48": "./images/icon.png",
