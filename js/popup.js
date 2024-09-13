@@ -144,8 +144,10 @@ var psb_course_list_div = document.getElementById("psb_course_list_div");
 function addPsbDiv(course_code) {
     chrome.storage.sync.get(["course_list"], (data) => {
         var course_list = data.course_list;
-        if (course_list.includes(course_code.substring(0, 8))){
-            return;
+        if (course_list){
+            if (course_list.includes(course_code.substring(0, 8))){
+                return;
+            }
         }
         var psb_div = document.createElement("div");
         var pp = document.createElement("p");
@@ -160,11 +162,16 @@ function addPsbDiv(course_code) {
         psb_div.addEventListener("click", function () {
             chrome.storage.sync.get(["course_list"], (data) => {
                 course_list = data.course_list;
+                if (!course_list){
+                    course_list = [];
+                }
                 course_list.push(course_code.substring(0, 8));
                 chrome.storage.sync.set({ course_list: course_list, change_flag: true });
                 console.log(course_list);
                 add_new_p(course_code.substring(0, 8))
                 psb_course_list_div.removeChild(psb_div);
+                var len = psb_course_list_div.children.length * 40;
+                psb_course_list_div.style.height = len + "px";
             });
         });
     });
@@ -186,3 +193,13 @@ expand_btn.addEventListener("click", function () {
 });
 
 
+// help
+var help_btn = document.getElementById("help");
+var help_text = document.getElementById("help_text");
+help_btn.addEventListener("click", function () {
+    if (help_text.style.display == "block") {
+        help_text.style.display = "none";
+    } else {
+        help_text.style.display = "block";
+    }
+});

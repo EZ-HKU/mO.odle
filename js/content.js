@@ -27,7 +27,7 @@ const Home_handler = () => {
             change_flag = data.change_flag;
             if (change_flag || !data.course_dict || Object.keys(data.course_dict).length === 0) {
                 // 更新了/无dict
-                if (data.course_dict){
+                if (data.course_dict) {
                     course_dict = data.course_dict;
                 }
                 chrome.storage.sync.set({ change_flag: false });
@@ -74,7 +74,7 @@ const Home_handler = () => {
                         console.log(course_id);
                         if (Object.keys(course_dict).includes(course_id)) {
                             // return;
-                        }else{
+                        } else {
                             console.log("course_id not found in dict");
                             course_dict[course_id] = {
                                 "detail": "",
@@ -114,15 +114,19 @@ const Home_handler = () => {
 
 };
 
+// My Courses 页面
 const CourseList_handler = () => {
     var course_list = [];
     var course_dict = {};
     chrome.storage.sync.get(["course_list", "course_dict"], (data) => {
         course_list = data.course_list;
         course_dict = data.course_dict;
+        generate(course_list, course_dict);
+        const inputElement = document.querySelector('input[type="text"]');
+        inputElement.addEventListener('input', debounce(generate, 500));
     });
 
-    function generate() {
+    function generate(course_list, course_dict) {
         const observer = new MutationObserver((mutations) => {
             const targetElement = document.querySelector('.coursemenubtn');
             if (targetElement) {
@@ -141,17 +145,19 @@ const CourseList_handler = () => {
                         var info = i.parentNode.querySelector(".sr-only").textContent.substring(27);
                         var code = info.substring(0, 8);
                         var detail = info.substring(9);
-                        if (course_list.includes(code)) {
-                            alert("You have already added this course to your mO.odle Courses");
-                        } else {
-                            course_list.push(code);
-                            course_dict[code] = {
-                                "detail": detail,
-                                "url": url
+                        if (course_list) {
+                            if (course_list.includes(code)) {
+                                alert("You have already added this course to your mO.odle Courses");
                             }
-                            chrome.storage.sync.set({ course_list: course_list, course_dict: course_dict}); // , change_flag: true
+                        } else {
+                            course_list = [];
                         }
-
+                        course_list.push(code);
+                        course_dict[code] = {
+                            "detail": detail,
+                            "url": url
+                        }
+                        chrome.storage.sync.set({ course_list: course_list, course_dict: course_dict }); // , change_flag: true
                     })
                     i.parentNode.style.display = "flex";
                     i.parentNode.insertBefore(my_card_btn, i)
@@ -174,11 +180,6 @@ const CourseList_handler = () => {
             }, delay);
         };
     }
-
-    generate();
-
-    const inputElement = document.querySelector('input[type="text"]');
-    inputElement.addEventListener('input', debounce(generate, 500));
 
 }
 
