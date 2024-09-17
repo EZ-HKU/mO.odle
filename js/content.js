@@ -47,7 +47,7 @@ const Home_handler = () => {
     var summaryElements = document.querySelectorAll('.summary');
     var unshown_course_list = [];
     var divHTML = `
-    <div class="card">
+    <div class="card-class">
     <a class="card2" href="{course_url}" target="_blank">
         <p class="course-code-class" style="font-weight: bold;">{course_code}</p>
         <p class="small">{course_name}</p>
@@ -103,13 +103,15 @@ const Home_handler = () => {
 
     // 根据list和dict生成页面元素（unshown的课程不显示）
     function initialize() {
+        var add_div = document.createElement('div');
+        add_div.classList.add("container-class");
         course_list.forEach(function (course_code) {
             course_detail = course_dict[course_code]["detail"];
             var newDiv = document.createElement('div');
             newDiv.innerHTML = divHTML.replace("{course_code}", course_code).replace("{course_name}", course_detail).replace("{course_url}", course_dict[course_code]["url"]);
-            newDiv.style.display = "inline-block";
-            mainDiv.insertAdjacentElement('beforebegin', newDiv);
+            add_div.appendChild(newDiv);
         });
+        mainDiv.insertAdjacentElement('beforebegin', add_div);
     }
 
 };
@@ -123,7 +125,9 @@ const CourseList_handler = () => {
         course_list = data.course_list;
         course_dict = data.course_dict;
         generate(course_list, course_dict);
-        inputElement.addEventListener('input', debounce(generate(course_list, course_dict), 600));
+        inputElement.addEventListener('input', debounce(() => {
+            generate(course_list, course_dict);
+        }, 500));
     });
 
     function generate(course_list, course_dict) {
@@ -208,12 +212,9 @@ const CourePage_handler = () => {
             container.appendChild(div);
         }
 
-        // add div dash line
         const div = document.createElement('div');
         div.classList.add('dashed-line');
-        // set margin 
         div.style.marginLeft = "10px";
-        // set width
         div.style.width = "calc(100% - 20px)";
         container.appendChild(div);
 
@@ -223,7 +224,7 @@ const CourePage_handler = () => {
         const courseCode = title.substring(0, 8);
         console.log(courseCode);
         if (!Object.keys(course_dict).includes(courseCode)) {
-            
+
             var add_button = document.createElement('div');
             add_button.textContent = "Add this course";
             add_button.classList.add('course_text');
@@ -241,7 +242,7 @@ const CourePage_handler = () => {
                 CourePage_handler();
 
             });
-            
+
 
             container.appendChild(add_button);
         } else {
@@ -257,11 +258,11 @@ const CourePage_handler = () => {
                 // reload sidebar
                 sidebar.parentNode.removeChild(container);
                 CourePage_handler();
-                
+
 
             });
             container.appendChild(remove_button);
-            
+
 
         }
 
