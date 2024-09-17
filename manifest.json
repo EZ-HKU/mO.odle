@@ -28,5 +28,12 @@
     "16": "./images/icon.png",
     "48": "./images/icon.png",
     "128": "./images/icon.png"
+  },
+  "omnibox": {
+    "keyword": "mo"
+  },
+  "background": {
+    "persistent": false,
+    "scripts": ["./js/background.js"]
   }
 }
