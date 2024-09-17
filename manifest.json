@@ -33,7 +33,6 @@
     "keyword": "mo"
   },
   "background": {
-    "persistent": false,
-    "scripts": ["./js/background.js"]
+    "service_worker": "./js/background.js"
   }
 }
