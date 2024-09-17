@@ -118,15 +118,17 @@ const Home_handler = () => {
 const CourseList_handler = () => {
     var course_list = [];
     var course_dict = {};
+    const inputElement = document.querySelector('input[type="text"]');
     chrome.storage.sync.get(["course_list", "course_dict"], (data) => {
         course_list = data.course_list;
         course_dict = data.course_dict;
         generate(course_list, course_dict);
-        const inputElement = document.querySelector('input[type="text"]');
-        inputElement.addEventListener('input', debounce(generate, 500));
+        inputElement.addEventListener('input', debounce(generate(course_list, course_dict), 600));
     });
 
     function generate(course_list, course_dict) {
+        console.log("generate");
+        console.log(course_list);
         const observer = new MutationObserver((mutations) => {
             const targetElement = document.querySelector('.coursemenubtn');
             if (targetElement) {
@@ -148,6 +150,7 @@ const CourseList_handler = () => {
                         if (course_list) {
                             if (course_list.includes(code)) {
                                 alert("You have already added this course to your mO.odle Courses");
+                                return;
                             }
                         } else {
                             course_list = [];
