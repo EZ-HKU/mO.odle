@@ -188,7 +188,7 @@ const CourePage_handler = () => {
     var sidebar = document.getElementById("courseindex-content");
 
     var course_dict = {};
-    chrome.storage.sync.get(["course_dict", "change_flag"], (data) => {
+    chrome.storage.sync.get(["course_dict", "change_flag", "course_list"], (data) => {
         if (data.change_flag) {
             void 0;
             // 就是只有在Home页刷新才会更新dict，否则在popup更新后并不会更新侧边栏
@@ -204,6 +204,57 @@ const CourePage_handler = () => {
             });
             container.appendChild(div);
         }
+
+        const currentURL = window.location.href;
+        // if current page is not in the course_dict, add a button to add it
+        const title = document.querySelector('.h2').textContent;
+        const courseCode = title.substring(0, 8);
+        console.log(courseCode);
+        if (!Object.keys(course_dict).includes(courseCode)) {
+            
+            var add_button = document.createElement('div');
+            add_button.textContent = "Add this course";
+            add_button.classList.add('course_text');
+            // add dash line to button
+            add_button.style.borderTop = "1px dashed";
+            add_button.addEventListener('click', () => {
+                course_dict[courseCode] = {
+                    "detail": title.substring(9),
+                    "url": currentURL
+                }
+                var course_list = data.course_list;
+                course_list.push(courseCode);
+                chrome.storage.sync.set({ course_dict: course_dict, change_flag: true, course_list: course_list });
+
+                // reload sidebar
+                sidebar.parentNode.removeChild(container);
+                CourePage_handler();
+
+            });
+            container.appendChild(add_button);
+        } else {
+            var remove_button = document.createElement('div');
+            remove_button.textContent = "Remove this course";
+            remove_button.classList.add('course_text');
+            // add dash line to button
+            remove_button.style.borderTop = "1px dashed";
+            remove_button.addEventListener('click', () => {
+                delete course_dict[courseCode];
+                var course_list = data.course_list;
+                course_list = course_list.filter(item => item !== courseCode);
+                chrome.storage.sync.set({ course_dict: course_dict, change_flag: true, course_list: course_list });
+
+                // reload sidebar
+                sidebar.parentNode.removeChild(container);
+                CourePage_handler();
+                
+
+            });
+            container.appendChild(remove_button);
+            
+
+        }
+
         sidebar.parentNode.insertBefore(container, sidebar);
     });
 };
