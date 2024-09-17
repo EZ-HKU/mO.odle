@@ -205,6 +205,15 @@ const CourePage_handler = () => {
             container.appendChild(div);
         }
 
+        // add div dash line
+        const div = document.createElement('div');
+        div.classList.add('dashed-line');
+        // set margin 
+        div.style.marginLeft = "10px";
+        // set width
+        div.style.width = "calc(100% - 20px)";
+        container.appendChild(div);
+
         const currentURL = window.location.href;
         // if current page is not in the course_dict, add a button to add it
         const title = document.querySelector('.h2').textContent;
@@ -215,8 +224,6 @@ const CourePage_handler = () => {
             var add_button = document.createElement('div');
             add_button.textContent = "Add this course";
             add_button.classList.add('course_text');
-            // add dash line to button
-            add_button.style.borderTop = "1px dashed";
             add_button.addEventListener('click', () => {
                 course_dict[courseCode] = {
                     "detail": title.substring(9),
@@ -231,13 +238,13 @@ const CourePage_handler = () => {
                 CourePage_handler();
 
             });
+            
+
             container.appendChild(add_button);
         } else {
             var remove_button = document.createElement('div');
             remove_button.textContent = "Remove this course";
             remove_button.classList.add('course_text');
-            // add dash line to button
-            remove_button.style.borderTop = "1px dashed";
             remove_button.addEventListener('click', () => {
                 delete course_dict[courseCode];
                 var course_list = data.course_list;
