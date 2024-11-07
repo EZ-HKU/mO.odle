@@ -167,6 +167,7 @@ const CourseList_handler = () => {
                         var parent_node = i.parentNode.parentNode.parentNode.parentNode;
                         var url = parent_node.querySelector("a").href;
                         var info = i.parentNode.querySelector(".sr-only").textContent.substring(27);
+                        // info是code+detail
                         var code = info.substring(0, 8);
                         var detail = info.substring(9);
                         if (course_list) {
@@ -177,11 +178,13 @@ const CourseList_handler = () => {
                         } else {
                             course_list = [];
                         }
-                        course_list.push(code);
-                        course_dict[code] = {
+                        course_list.push(info);
+                        course_dict[info] = {
                             "detail": detail,
+                            "mo_code": code,
                             "url": url
                         }
+                        alert("Course added successfully!");
                         chrome.storage.sync.set({ course_list: course_list, course_dict: course_dict }); // , change_flag: true
                     })
                     i.parentNode.style.display = "flex";
@@ -239,29 +242,23 @@ const CourePage_handler = () => {
         const currentURL = window.location.href;
         // if current page is not in the course_dict, add a button to add it
         const title = document.querySelector('.h2').textContent;
-        const courseCode = title.substring(0, 8);
-        console.log(courseCode);
-        if (!Object.keys(course_dict).includes(courseCode)) {
-
+        if (!Object.keys(course_dict).includes(title)) {
             var add_button = document.createElement('div');
             add_button.textContent = "Add this course";
             add_button.classList.add('course_text');
             add_button.addEventListener('click', () => {
-                course_dict[courseCode] = {
+                course_dict[title] = {
                     "detail": title.substring(9),
+                    "mo_code": title.substring(0, 8),
                     "url": currentURL
                 }
                 var course_list = data.course_list;
                 course_list.push(courseCode);
                 chrome.storage.sync.set({ course_dict: course_dict, change_flag: true, course_list: course_list });
-
                 // reload sidebar
                 sidebar.parentNode.removeChild(container);
                 CourePage_handler();
-
             });
-
-
             container.appendChild(add_button);
         } else {
             var remove_button = document.createElement('div');
@@ -272,18 +269,12 @@ const CourePage_handler = () => {
                 var course_list = data.course_list;
                 course_list = course_list.filter(item => item !== courseCode);
                 chrome.storage.sync.set({ course_dict: course_dict, change_flag: true, course_list: course_list });
-
                 // reload sidebar
                 sidebar.parentNode.removeChild(container);
                 CourePage_handler();
-
-
             });
             container.appendChild(remove_button);
-
-
         }
-
         sidebar.parentNode.insertBefore(container, sidebar);
     });
 };
