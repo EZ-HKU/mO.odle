@@ -3,7 +3,9 @@ var course_input = document.getElementById("course_input");
 var course_list_div = document.getElementById("course_list_div");
 var course_list = [];
 
-function add_new_p(course) {
+function add_new_p(course_title, value, course_list, course_dict) {
+    console.log(course_list);
+    console.log(course_title, value);
     var tempDiv = document.createElement("div");
     var newText = document.createElement("span");
     var del_btn = document.createElement("button");
@@ -18,49 +20,51 @@ function add_new_p(course) {
     del_btn.onclick = function () {
         chrome.storage.sync.set({ change_flag: true });
         course_list_div.removeChild(tempDiv);
-        course_list = course_list.filter(item => item !== course);
-        chrome.storage.sync.set({ course_list: course_list });
-        // 这个地方没有删掉dict
+        course_list = course_list.filter(item => item !== course_title);
+        delete course_dict[course_title];
+        chrome.storage.sync.set({ course_list: course_list, course_dict: course_dict });
     }
-    newText.innerText = course;
+    newText.innerText = value.mo_code;
     tempDiv.appendChild(newText)
     tempDiv.appendChild(del_btn)
     course_list_div.appendChild(tempDiv);
-    course_input.value = "";
+    // course_input.value = "";
 }
 
-chrome.storage.sync.get("course_list", (data) => {
-    if (data.course_list && data.course_list.length > 0) {
-        course_list = data.course_list;
-        course_list.forEach(function (course_code) {
-            add_new_p(course_code);
-        });
+chrome.storage.sync.get(["course_dict", "course_list"], (data) => {
+    if (data.course_dict && Object.keys(data.course_dict).length > 0) {
+        var course_dict = data.course_dict;
+        var course_list = data.course_list;
+        for (const [key, value] of Object.entries(course_dict)) {
+            add_new_p(key, value, course_list, course_dict);
+        }
+        
     } else {
         console.log('add at least one course!');
     }
 })
 
-function click_add_btn() {
-    console.log('add course');
-    if (course_input.value === "") {
-        chrome.tabs.create({ url: "https://moodle.hku.hk/my/courses.php" });
-        return;
-    }
-    var code = course_input.value.toUpperCase();
-    chrome.storage.sync.set({ change_flag: true });
-    course_list.push(code);
-    add_new_p(code);
-    chrome.storage.sync.set({ course_list: course_list });
-}
+// function click_add_btn() {
+//     console.log('add course');
+//     if (course_input.value === "") {
+//         chrome.tabs.create({ url: "https://moodle.hku.hk/my/courses.php" });
+//         return;
+//     }
+//     var code = course_input.value.toUpperCase();
+//     chrome.storage.sync.set({ change_flag: true });
+//     course_list.push(code);
+//     add_new_p(code);
+//     chrome.storage.sync.set({ course_list: course_list });
+// }
 
-course_input.addEventListener("keydown", (event) => {
-    if (event.key == 'Enter') {
-        click_add_btn();
-    }
-})
+// course_input.addEventListener("keydown", (event) => {
+//     if (event.key == 'Enter') {
+//         click_add_btn();
+//     }
+// })
 
 
-add_btn.addEventListener("click", click_add_btn);
+// add_btn.addEventListener("click", click_add_btn);
 
 
 // 到此，会有正确的course_list (list)，否则为空
@@ -135,6 +139,7 @@ chrome.storage.sync.get(["psb_course_list"], (data) => {
     if (data.psb_course_list) {
         var psb_course_list = data.psb_course_list;
         psb_course_list.forEach(function (course_code) {
+            // 这个course_code是完整的(code+detail)
             addPsbDiv(course_code);
         });
     }
@@ -145,7 +150,7 @@ function addPsbDiv(course_code) {
     chrome.storage.sync.get(["course_list"], (data) => {
         var course_list = data.course_list;
         if (course_list){
-            if (course_list.includes(course_code.substring(0, 8))){
+            if (course_list.includes(course_code)){
                 return;
             }
         }
@@ -160,15 +165,17 @@ function addPsbDiv(course_code) {
         psb_div.style.margin = "5px 0"
         psb_course_list_div.appendChild(psb_div);
         psb_div.addEventListener("click", function () {
-            chrome.storage.sync.get(["course_list"], (data) => {
+            chrome.storage.sync.get(["course_list", "course_dict"], (data) => {
                 course_list = data.course_list;
+                course_dict = data.course_dict;
                 if (!course_list){
                     course_list = [];
                 }
-                course_list.push(course_code.substring(0, 8));
+                // 这个code是code+detail
+                course_list.push(course_code); //.substring(0, 8)
                 chrome.storage.sync.set({ course_list: course_list, change_flag: true });
                 console.log(course_list);
-                add_new_p(course_code.substring(0, 8))
+                add_new_p(course_code, { "mo_code": course_code.substring(0, 8) }, course_list, course_dict);
                 psb_course_list_div.removeChild(psb_div);
                 var len = psb_course_list_div.children.length * 40;
                 psb_course_list_div.style.height = len + "px";

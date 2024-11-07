@@ -13,6 +13,7 @@ const Home_handler = () => {
             psb_course_list.push(psb_course_code);
         }
     });
+    console.log("psb:", psb_course_list);
     chrome.storage.sync.set({ psb_course_list: psb_course_list });
 
     // 每次进入页面时，根据storage更新页面
@@ -62,6 +63,7 @@ const Home_handler = () => {
     // 根据页面中的class和storage里的list生成dict  => dict
     var mainDiv = document.getElementById("frontpage-course-list")
     function gen_dict(course_dict) {
+        var courseCount = {};
         summaryElements.forEach(function (summaryElement) {
             var firstChild = summaryElement.firstElementChild;
             if (firstChild) {
@@ -71,16 +73,26 @@ const Home_handler = () => {
                     var urlContent = firstGrandChild.href;
                     console.log(course_dict);
                     course_list.forEach(function (course_id) {
+                        // course_id = code+detail
                         console.log(course_id);
                         if (Object.keys(course_dict).includes(course_id)) {
-                            // return;
+                            return;
                         } else {
                             console.log("course_id not found in dict");
                             course_dict[course_id] = {
+                                "mo_code": "",
                                 "detail": "",
                                 "url": ""
                             }
                         }
+                        var prefix = course_id.substring(0, 8);
+                        if (!courseCount[prefix]) {
+                            courseCount[prefix] = 0;
+                        }
+                        courseCount[prefix]++;
+                        console.log(courseCount);
+                    });
+                    course_list.forEach(function (course_id) {
                         if (textContent.includes(course_id)) {
                             console.log("course_id found in textContent");
                             course_dict[course_id]["detail"] = textContent.substring(9);
@@ -90,8 +102,13 @@ const Home_handler = () => {
                 }
             }
         });
-
+        var copy_courseCount = JSON.parse(JSON.stringify(courseCount));
+        console.log("copy!");
         course_list.forEach(function (course_code) {
+            var prefix = course_code.substring(0, 8);
+            var suffix = copy_courseCount[prefix] > 1 ? '-' + String.fromCharCode(65 + (copy_courseCount[prefix] - courseCount[prefix])) : '';
+            courseCount[prefix]--;
+            course_dict[course_code]["mo_code"] = prefix + suffix;
             if (course_dict[course_code]["detail"] == "") {
                 unshown_course_list.push(course_code);
             }
@@ -106,9 +123,10 @@ const Home_handler = () => {
         var add_div = document.createElement('div');
         add_div.classList.add("container-class");
         course_list.forEach(function (course_code) {
-            course_detail = course_dict[course_code]["detail"];
+            var course_detail = course_dict[course_code]["detail"];
+            var mo_code = course_dict[course_code]["mo_code"];
             var newDiv = document.createElement('div');
-            newDiv.innerHTML = divHTML.replace("{course_code}", course_code).replace("{course_name}", course_detail).replace("{course_url}", course_dict[course_code]["url"]);
+            newDiv.innerHTML = divHTML.replace("{course_code}", mo_code).replace("{course_name}", course_detail).replace("{course_url}", course_dict[course_code]["url"]);
             add_div.appendChild(newDiv);
         });
         mainDiv.insertAdjacentElement('beforebegin', add_div);
@@ -204,7 +222,7 @@ const CourePage_handler = () => {
         var container = document.createElement('div');
         for (const [key, value] of Object.entries(course_dict)) {
             const div = document.createElement('div');
-            div.textContent = key;
+            div.textContent = value.mo_code;
             div.classList.add('course_text');
             div.addEventListener('click', () => {
                 window.location.href = value.url;
@@ -274,6 +292,7 @@ const CourePage_handler = () => {
 // route
 const currentURL = window.location.href;
 const route = () => {
+
     if (currentURL.includes("view.php")) {
         CourePage_handler();
     } else if (currentURL.includes("courses.php")) {

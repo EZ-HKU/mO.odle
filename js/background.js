@@ -18,9 +18,21 @@ chrome.omnibox.onInputChanged.addListener((text, suggest) => {
         const course_code = text.toUpperCase();
         for (const key in course_dict) {
             if (key.includes(course_code)) {
-                suggestions.push({ content: key, description: key+ ": " + course_dict[key]["detail"] });
+                suggestions.push({ content: key, description: key + ": " + course_dict[key]["detail"] });
             }
         }
         suggest(suggestions);
     });
 });
+
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.windows.create({
+      url: '../tip.html',
+      type: 'popup',
+      width: 800,
+      height: 600,
+      left: 400, 
+      top: 100
+    });
+  });
+
