@@ -1,15 +1,140 @@
-var add_btn = document.getElementById("add_btn");
-var course_input = document.getElementById("course_input");
 var course_list_div = document.getElementById("course_list_div");
-var course_list = [];
+var expand_btn = document.getElementById("expand_btn");
+var psb_course_list_div = document.getElementById("psb_course_list_div");
+// var course_list = [];
+// var course_dict = {};
+// var psb_course_list = [];
 
-function add_new_p(course_title, value, course_list, course_dict) {
-    console.log(course_list);
-    console.log(course_title, value);
+// course_title: code+detail
+// course_list: list of course_title (str)
+// course_dict: dict of course_title: { mo_code: {
+//                                      title: ori code + detail, 
+//                                      detail: detail, 
+//                                      url: url } }        
+// psb_course_list: list of course_title
+
+function Course(title, code, detail, url) {
+    this.title = title;
+    this.code = code;
+    this.detail = detail;
+    this.url = url;
+}
+
+
+function CourseList() {
+    this.courses = [];
+}
+
+CourseList.prototype.addCourse = function (course) {
+    this.courses.push(course);
+};
+
+CourseList.prototype.findCourseByCode = function (code) {
+    return this.courses.find(function (course) {
+        return course.code === code;
+    });
+};
+
+CourseList.prototype.findCourseByTitle = function (title) {
+    return this.courses.find(function (course) {
+        return course.title === title;
+    });
+};
+
+CourseList.prototype.deleteCourseByCode = function (code) {
+    this.courses = this.courses.filter(function (course) {
+        return course.code !== code;
+    });
+};
+
+CourseList.prototype.deleteCourseByTitle = function (title) {
+    this.courses = this.courses.filter(function (course) {
+        return course.title !== title;
+    });
+};
+
+function CoursesWithSameCode(code, courses) {
+    this.code = code;
+    this.courses = courses;
+}
+
+function CourseCodeList() {
+    this.courseCodes = [];
+}
+
+CourseCodeList.prototype.addCourse = function (course) {
+    var tempList = this.findCoursesByCode(course.code);
+    if (tempList) {
+        this.courseCodes.forEach(function (courseCode) {
+            if (courseCode.code === course.code) {
+                courseCode.courses.addCourse(course);
+            }
+        });
+
+    } else {
+        var newCourseList = new CourseList();
+        newCourseList.addCourse(course);
+        var newCourseCode = new CoursesWithSameCode(course.code, newCourseList);
+        this.courseCodes.push(newCourseCode);
+    }
+};
+
+CourseCodeList.prototype.getAllCourses = function () {
+    var courses = [];
+    this.courseCodes.forEach(function (courseCode) {
+        courses = courses.concat(courseCode.courses.courses);
+    });
+    return courses;
+}
+
+CourseCodeList.prototype.findCoursesByCode = function (code) {
+    return this.courseCodes.find(function (courseCode) {
+        return courseCode.code === code;
+    });
+};
+
+CourseCodeList.prototype.findCourseByTitle = function (title) {
+    for (var i = 0; i < this.courseCodes.length; i++) {
+        var course = this.courseCodes[i].courses.findCourseByTitle(title);
+        if (course) {
+            return course;
+        }
+    }
+    return null;
+};
+
+CourseCodeList.prototype.removeCourseByTitle = function (title) {
+    for (var i = 0; i < this.courseCodes.length; i++) {
+        this.courseCodes[i].courses.deleteCourseByTitle(title);
+    }
+}
+
+
+
+courseCodeListFromStorage = function (courseCodeList) {
+    if (!courseCodeList) {
+        return new CourseCodeList();
+    }
+    var newCourseCodeList = new CourseCodeList();
+    courseCodeList.courseCodes.forEach(function (courseCode) {
+        var newCourseList = new CourseList();
+        courseCode.courses.courses.forEach(function (course) {
+            newCourseList.addCourse(new Course(course.title, course.code, course.detail, course.url));
+        });
+        newCourseCodeList.courseCodes.push(new CoursesWithSameCode(courseCode.code, newCourseList));
+    });
+    return newCourseCodeList;
+}
+
+
+// 以下为course_list
+
+function add_course(course) {
     var tempDiv = document.createElement("div");
     var newText = document.createElement("span");
     var del_btn = document.createElement("button");
     tempDiv.style.height = "30px";
+    tempDiv.style.width = "210px"
     tempDiv.style.display = "flex";
     tempDiv.style.justifyContent = "space-between";
     tempDiv.style.alignItems = "center";
@@ -18,195 +143,107 @@ function add_new_p(course_title, value, course_list, course_dict) {
     del_btn.classList.add("my-btn")
     del_btn.classList.add("del-btn")
     del_btn.onclick = function () {
-        chrome.storage.sync.set({ change_flag: true });
-        course_list_div.removeChild(tempDiv);
-        course_list = course_list.filter(item => item !== course_title);
-        delete course_dict[course_title];
-        chrome.storage.sync.set({ course_list: course_list, course_dict: course_dict });
-    }
-    newText.innerText = value.mo_code;
+        chrome.storage.sync.get(["course_code_list", "psb_course_list"], (data) => {
+            var course_code_list = courseCodeListFromStorage(data.course_code_list);
+            course_code_list.removeCourseByTitle(course.title);
+            course_list_div.removeChild(tempDiv);
+            if (data.psb_course_list) {
+                var psb_course_list = courseCodeListFromStorage(data.psb_course_list);
+                add_psb_course(course);
+                psb_course_list.addCourse(course);
+                chrome.storage.sync.set({ psb_course_list: psb_course_list });
+            }
+            var len = course_list_div.children.length * 30;
+            course_list_div.style.height = len + "px";
+            chrome.storage.sync.set({ course_code_list: course_code_list, change_flag: true });
+        });
+    };
+    newText.innerText = course.title;
+    newText.style.whiteSpace = "nowrap";
+    newText.style.overflow = "hidden";
+    newText.style.textOverflow = "ellipsis";
+    newText.style.marginRight = "15px";
+    newText.setAttribute('title', course.title);
     tempDiv.appendChild(newText)
     tempDiv.appendChild(del_btn)
     course_list_div.appendChild(tempDiv);
-    // course_input.value = "";
+    var len = course_list_div.children.length * 30;
+    course_list_div.style.height = len + "px";
 }
 
-chrome.storage.sync.get(["course_dict", "course_list"], (data) => {
-    if (data.course_dict && Object.keys(data.course_dict).length > 0) {
-        var course_dict = data.course_dict;
-        var course_list = data.course_list;
-        for (const [key, value] of Object.entries(course_dict)) {
-            add_new_p(key, value, course_list, course_dict);
-        }
-        
-    } else {
-        console.log('add at least one course!');
-    }
-})
 
-// function click_add_btn() {
-//     console.log('add course');
-//     if (course_input.value === "") {
-//         chrome.tabs.create({ url: "https://moodle.hku.hk/my/courses.php" });
-//         return;
-//     }
-//     var code = course_input.value.toUpperCase();
-//     chrome.storage.sync.set({ change_flag: true });
-//     course_list.push(code);
-//     add_new_p(code);
-//     chrome.storage.sync.set({ course_list: course_list });
-// }
-
-// course_input.addEventListener("keydown", (event) => {
-//     if (event.key == 'Enter') {
-//         click_add_btn();
-//     }
-// })
-
-
-// add_btn.addEventListener("click", click_add_btn);
-
-
-// 到此，会有正确的course_list (list)，否则为空
-// 以下为unshown
-
-chrome.storage.sync.get("unshown_course_list", (data) => {
-    if (data.unshown_course_list) {
-        unshown_course_list = data.unshown_course_list;
-        unshown_course_list.forEach(function (course_code) {
-            addDiv(course_code);
-        });
-    }
-})
-
-var container = document.getElementById("container")
-var detail = "";
-var url = "";
-
-function addDiv(course_code) {
-    var div = document.createElement("div");
-    var inner_div = document.createElement('div')
-    inner_div.style.display = "flex";
-    inner_div.style.justifyContent = "space-between";
-    inner_div.style.alignItems = "center";
-    var text_p = document.createElement("p");
-    text_p.innerText = course_code;
-    text_p.style.margin = "5px 0 5px 5px";
-    text_p.style.fontSize = "14px";
-    var ipt_detail = document.createElement("input");
-    var ipt_url = document.createElement("input");
-    ipt_detail.classList.add("input");
-    ipt_url.classList.add("input");
-    ipt_detail.type = "text";
-    ipt_detail.placeholder = "Name";
-    ipt_url.type = "text";
-    ipt_url.placeholder = "URL";
-    var btn = document.createElement("button");
-    btn.innerText = "+";
-    btn.classList.add("my-btn");
-    btn.classList.add("add-btn");
-    btn.onclick = function () {
-        detail = ipt_detail.value;
-        url = ipt_url.value;
-        if (detail === "" || url === "") {
-            return;
-        }
-        chrome.storage.sync.get(["course_dict", "unshown_course_list"], (data) => {
-            if (data.course_dict) {
-                data.course_dict[course_code] = { "detail": detail, "url": url };
-                chrome.storage.sync.set({ course_dict: data.course_dict });
-            }
-            if (data.unshown_course_list) {
-                chrome.storage.sync.set({ unshown_course_list: data.unshown_course_list.filter(item => item !== course_code) });
-            }
-        })
-        ipt_detail.value = "";
-        ipt_url.value = "";
-        container.removeChild(div);
-    }
-    inner_div.appendChild(ipt_url);
-    inner_div.appendChild(btn);
-    div.appendChild(text_p);
-    div.appendChild(ipt_detail);
-    div.appendChild(inner_div);
-    container.appendChild(div);
-}
-
-// 以下为psb
-
-chrome.storage.sync.get(["psb_course_list"], (data) => {
-    console.log(data);
-    if (data.psb_course_list) {
-        var psb_course_list = data.psb_course_list;
-        psb_course_list.forEach(function (course_code) {
-            // 这个course_code是完整的(code+detail)
-            addPsbDiv(course_code);
-        });
-    }
-});
-
-var psb_course_list_div = document.getElementById("psb_course_list_div");
-function addPsbDiv(course_code) {
-    chrome.storage.sync.get(["course_list"], (data) => {
-        var course_list = data.course_list;
-        if (course_list){
-            if (course_list.includes(course_code)){
-                return;
-            }
-        }
-        var psb_div = document.createElement("div");
-        var pp = document.createElement("p");
-        pp.innerText = course_code;
-        pp.style.whiteSpace = "nowrap";
-        pp.style.overflow = "hidden";
-        pp.style.textOverflow = "ellipsis";
-        psb_div.appendChild(pp);
-        psb_div.classList.add("course_text")
-        psb_div.style.margin = "5px 0"
-        psb_course_list_div.appendChild(psb_div);
-        psb_div.addEventListener("click", function () {
-            chrome.storage.sync.get(["course_list", "course_dict"], (data) => {
-                course_list = data.course_list;
-                course_dict = data.course_dict;
-                if (!course_list){
-                    course_list = [];
-                }
-                // 这个code是code+detail
-                course_list.push(course_code); //.substring(0, 8)
-                chrome.storage.sync.set({ course_list: course_list, change_flag: true });
-                console.log(course_list);
-                add_new_p(course_code, { "mo_code": course_code.substring(0, 8) }, course_list, course_dict);
-                psb_course_list_div.removeChild(psb_div);
-                var len = psb_course_list_div.children.length * 40;
-                psb_course_list_div.style.height = len + "px";
+function generate_course_list_div() {
+    chrome.storage.sync.get(["course_code_list"], (data) => {
+        if (data.course_code_list) {
+            console.log(data.course_code_list);
+            var course_code_list = courseCodeListFromStorage(data.course_code_list);
+            var courses = course_code_list.getAllCourses();
+            courses.forEach(course => {
+                add_course(course);
             });
+        }
+    })
+}
+
+
+
+// 以下为psb_course_list
+
+function add_psb_course(course) {
+    var psb_div = document.createElement("div");
+    var pp = document.createElement("p");
+    pp.style.whiteSpace = "nowrap";
+    pp.style.overflow = "hidden";
+    pp.style.textOverflow = "ellipsis";
+    pp.innerText = course.title;
+    psb_div.appendChild(pp);
+    psb_div.classList.add("course_text");
+    psb_div.style.margin = "5px 0";
+    psb_div.setAttribute('title', course.title);
+    psb_course_list_div.appendChild(psb_div);
+    var len = psb_course_list_div.children.length * 42;
+    psb_course_list_div.style.height = len + "px";
+    psb_div.addEventListener("click", function () {
+        chrome.storage.sync.get(["course_code_list", "psb_course_list"], (data) => {
+            var course_code_list = courseCodeListFromStorage(data.course_code_list);
+            var psb_course_list = courseCodeListFromStorage(data.psb_course_list);
+            course_code_list.addCourse(course);
+            psb_course_list_div.removeChild(psb_div);
+            psb_course_list.removeCourseByTitle(course.title);
+            var len = psb_course_list_div.children.length * 42;
+            psb_course_list_div.style.height = len + "px";
+            add_course(course);
+            chrome.storage.sync.set({ course_code_list: course_code_list, change_flag: true, psb_course_list: psb_course_list });
         });
     });
 }
 
 
-// expand btn
-var expand_btn = document.getElementById("expand_btn");
-expand_btn.addEventListener("click", function () {
-    console.log(psb_course_list_div.classList);
-    if (psb_course_list_div.classList.length === 1) {
-        psb_course_list_div.classList.remove('expand'); // 移除旧类
-        psb_course_list_div.style.height = "0";
-    }else{
-        psb_course_list_div.classList.add('expand'); // 添加新类
-        var len = psb_course_list_div.children.length * 40;
-        psb_course_list_div.style.height = len + "px";
-    }
-});
+function generate_psb_course_list_div() {
+    chrome.storage.sync.get(["psb_course_list"], (data) => {
+        if (data.psb_course_list) {
+            var psb_course_list = courseCodeListFromStorage(data.psb_course_list);
+            // psb_course_list.courseCodes = data.psb_course_list.courseCodes;
+            var courses = psb_course_list.getAllCourses();
+            courses.forEach(course => {
+                add_psb_course(course);
+            });
+        }
+    });
+}
 
 
-// help
-var help_btn = document.getElementById("help");
-var help_text = document.getElementById("help_text");
-help_btn.addEventListener("click", function () {
-    if (help_text.style.display == "block") {
-        help_text.style.display = "none";
-    } else {
-        help_text.style.display = "block";
-    }
+// init
+generate_psb_course_list_div();
+generate_course_list_div();
+
+document.getElementById('help').addEventListener('click', function () {
+    chrome.windows.create({
+        url: '../tip.html',
+        type: 'popup',
+        width: 800,
+        height: 600,
+        left: 400,
+        top: 100
+    });
 });

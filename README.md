@@ -1,17 +1,16 @@
 ## mO.odle
 
-mO.odle is an extension that helps you access course pages in Moodle more quickly, including courses that are not displayed on the Moodle homepage.
+mO.odle is a Chrome extension designed to help you access your Moodle course pages more efficiently, including those not displayed on the Moodle homepage.
 
 ### Usage
 
-- On the plugin settings page, enter the course code (I will add a more convenient method in the future!). After refreshing, shortcuts to the courses will be displayed. 
-- Courses not captured on the homepage will appear as empty, but you can supplement this by manually entering course information and links.
+- Add courses in the extension popup, or add them on the 'My Courses' page, or in the sidebar of the course page.
+- Detailed usage instructions can be found in the 'Help' section of the popup window.
 
 ### Notice
 
-- Please refrain from any illegal activities, this extension is *quite fragile*.
-- The extension does not collect any user information, as I don't know how to do that.
+- Please use this extension responsibly and avoid any illegal activities.
+- The extension does not collect any user information.
 
-
-***Make Moodle great again!***
-(^^ゞ
+***What will it do if HKU doesn't have me?***
+(^^ゞ 

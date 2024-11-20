@@ -42,44 +42,22 @@
     top: 0px;
     position: relative;
     width: 140px;
-    background-color: #f8faff;
+    /* background-color: #f8faff; */
+    border: 1px solid #D2D9DF;
+    box-shadow: 1px 1px 0px rgba(211, 211, 211, 0.2);
     border-radius: 4px;
     padding: 15px;
     margin: 8px;
     text-decoration: none;
     z-index: 0;
     overflow: hidden;
-    border: 1px solid #f8faff;
+    /* border: 1px solid #f8faff; */
     transition: all 0.2s ease-out;
 }
 
 .card2:hover {
-    box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
+    box-shadow: 2px 2px 3px rgba(174, 174, 174, 0.2);
     top: -4px;
-    border: 1px solid #ccc;
-    background-color: white;
-}
-
-.card2:before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    top: -16px;
-    right: -16px;
-    height: 28px;
-    width: 28px;
-    border-radius: 32px;
-    transform: scale(2);
-    transform-origin: 50% 50%;
-    transition: transform 0.15s ease-out;
-    background: #f8faff;
-    transition: all 0.2s ease-out;
-
-}
-
-.card2:hover:before {
-    background: #375592;
-    transform: scale(2.15);
 }
 
 
@@ -184,7 +162,7 @@
     align-items: center;
     background-color: rgba(255, 255, 255, 0.5);
     border: 0px solid rgba(0, 0, 0, 0.1);
-    border-radius: 5%;
+    border-radius: 5px;
     box-shadow: rgba(0, 0, 0, 0.08) 0 1px 5px 0;
     box-sizing: border-box;
     color: rgba(0, 0, 0, 0.85);
