@@ -1,26 +1,3 @@
-/* From Uiverse.io by jjiubs */
-.input {
-    border: 2px solid transparent;
-    width: 120px;
-    height: 25px;
-    padding-left: 0.8em;
-    margin: 3px 10px 3px 0;
-    outline: none;
-    overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.02);
-    border-radius: 10px;
-    transition: all 0.5s;
-}
-
-.input:hover,
-.input:focus {
-    border: 2px solid #aabccd;
-    box-shadow: 0px 0px 0px 4px rgba(133, 164, 193, 0.2);
-    background-color: white;
-}
-
-
-
 /* From Uiverse.io by Custyyyy */
 .my-btn {
     height: 25px;
@@ -129,26 +106,17 @@ span {
     overflow: hidden;
 }
 
-.course_text:hover,
-.course_text:focus {
-    border-color: rgba(0, 0, 0, 0.15);
-    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
-    color: rgba(0, 0, 0, 0.65);
-}
+
 
 .course_text:hover {
     transform: translateY(-1px);
+    box-shadow: rgba(0, 0, 0, 0.08) 0 1px 8px 0;
+
 }
 
-.course_text:active {
-    background-color: #F0F0F1;
-    border-color: rgba(0, 0, 0, 0.15);
-    box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
-    color: rgba(0, 0, 0, 0.65);
-    transform: translateY(0);
-}
 
-#psb_course_list_div {
+
+#psb_list_div {
     overflow: hidden;
     height: 0;
     transition: 0.3s ease-out;
@@ -238,4 +206,24 @@ span {
     overflow: hidden;
     border: 1px solid #f8faff;
     transition: all 0.2s ease-out;
+}
+
+svg{
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    left: 25px;
+    cursor: pointer;
+    transform-origin: center;
+}
+
+svg:hover {
+    transform: rotate(360deg);
+    transition: transform 0.5s ease-in-out;
+}
+
+.pp{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

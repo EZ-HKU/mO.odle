@@ -1,9 +1,9 @@
 var course_list_div = document.getElementById("course_list_div");
 var expand_btn = document.getElementById("expand_btn");
-var psb_course_list_div = document.getElementById("psb_course_list_div");
+var psb_list_div = document.getElementById("psb_list_div");
 // var course_list = [];
 // var course_dict = {};
-// var psb_course_list = [];
+// var psb_list = [];
 
 // course_title: code+detail
 // course_list: list of course_title (str)
@@ -11,7 +11,7 @@ var psb_course_list_div = document.getElementById("psb_course_list_div");
 //                                      title: ori code + detail, 
 //                                      detail: detail, 
 //                                      url: url } }        
-// psb_course_list: list of course_title
+// psb_list: list of course_title
 
 function Course(title, code, detail, url) {
     this.title = title;
@@ -143,15 +143,15 @@ function add_course(course) {
     del_btn.classList.add("my-btn")
     del_btn.classList.add("del-btn")
     del_btn.onclick = function () {
-        chrome.storage.sync.get(["course_code_list", "psb_course_list"], (data) => {
+        chrome.storage.sync.get(["course_code_list", "psb_list"], (data) => {
             var course_code_list = courseCodeListFromStorage(data.course_code_list);
             course_code_list.removeCourseByTitle(course.title);
             course_list_div.removeChild(tempDiv);
-            if (data.psb_course_list) {
-                var psb_course_list = courseCodeListFromStorage(data.psb_course_list);
+            if (data.psb_list) {
+                var psb_list = courseCodeListFromStorage(data.psb_list);
                 add_psb_course(course);
-                psb_course_list.addCourse(course);
-                chrome.storage.sync.set({ psb_course_list: psb_course_list });
+                psb_list.addCourse(course);
+                chrome.storage.sync.set({ psb_list: psb_list });
             }
             var len = course_list_div.children.length * 30;
             course_list_div.style.height = len + "px";
@@ -187,46 +187,57 @@ function generate_course_list_div() {
 
 
 
-// 以下为psb_course_list
+// 以下为psb_list
 
 function add_psb_course(course) {
     var psb_div = document.createElement("div");
     var pp = document.createElement("p");
-    pp.style.whiteSpace = "nowrap";
-    pp.style.overflow = "hidden";
-    pp.style.textOverflow = "ellipsis";
+    pp.classList.add("pp");
     pp.innerText = course.title;
     psb_div.appendChild(pp);
     psb_div.classList.add("course_text");
     psb_div.style.margin = "5px 0";
     psb_div.setAttribute('title', course.title);
-    psb_course_list_div.appendChild(psb_div);
-    var len = psb_course_list_div.children.length * 42;
-    psb_course_list_div.style.height = len + "px";
+    psb_list_div.appendChild(psb_div);
+    var len = psb_list_div.children.length * 42;
+    psb_list_div.style.height = len + "px";
     psb_div.addEventListener("click", function () {
-        chrome.storage.sync.get(["course_code_list", "psb_course_list"], (data) => {
+        chrome.storage.sync.get(["course_code_list", "psb_list"], (data) => {
             var course_code_list = courseCodeListFromStorage(data.course_code_list);
-            var psb_course_list = courseCodeListFromStorage(data.psb_course_list);
+            var psb_list = courseCodeListFromStorage(data.psb_list);
             course_code_list.addCourse(course);
-            psb_course_list_div.removeChild(psb_div);
-            psb_course_list.removeCourseByTitle(course.title);
-            var len = psb_course_list_div.children.length * 42;
-            psb_course_list_div.style.height = len + "px";
+            psb_list_div.removeChild(psb_div);
+            psb_list.removeCourseByTitle(course.title);
+            var len = psb_list_div.children.length * 42;
+            psb_list_div.style.height = len + "px";
             add_course(course);
-            chrome.storage.sync.set({ course_code_list: course_code_list, change_flag: true, psb_course_list: psb_course_list });
+            chrome.storage.sync.set({ course_code_list: course_code_list, change_flag: true, psb_list: psb_list });
         });
     });
 }
 
 
-function generate_psb_course_list_div() {
-    chrome.storage.sync.get(["psb_course_list"], (data) => {
-        if (data.psb_course_list) {
-            var psb_course_list = courseCodeListFromStorage(data.psb_course_list);
-            // psb_course_list.courseCodes = data.psb_course_list.courseCodes;
-            var courses = psb_course_list.getAllCourses();
+function generate_psb_list_div() {
+    chrome.storage.sync.get(["psb_list"], (data) => {
+        if (data.psb_list) {
+            var psb_list = courseCodeListFromStorage(data.psb_list);
+            var courses = psb_list.getAllCourses();
             courses.forEach(course => {
                 add_psb_course(course);
+            });
+        }else{
+            var psb_div = document.createElement("div");
+            var pp = document.createElement("p");
+            pp.classList.add("pp");
+            pp.innerText = "Get my courses";
+            psb_div.appendChild(pp);
+            psb_div.classList.add("course_text");
+            psb_div.style.margin = "5px 0";
+            psb_list_div.appendChild(psb_div);
+            var len = psb_list_div.children.length * 42;
+            psb_list_div.style.height = len + "px";
+            psb_div.addEventListener("click", function () {
+                chrome.tabs.create({ url: 'https://moodle.hku.hk/' });
             });
         }
     });
@@ -234,7 +245,7 @@ function generate_psb_course_list_div() {
 
 
 // init
-generate_psb_course_list_div();
+generate_psb_list_div();
 generate_course_list_div();
 
 document.getElementById('help').addEventListener('click', function () {
@@ -245,5 +256,11 @@ document.getElementById('help').addEventListener('click', function () {
         height: 600,
         left: 400,
         top: 100
+    });
+});
+
+document.getElementById('reset').addEventListener('click', function () {
+    chrome.storage.sync.remove('psb_list', function() {
+        window.location.reload();
     });
 });

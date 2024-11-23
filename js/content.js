@@ -109,23 +109,33 @@ courseCodeListFromStorage = function (courseCodeList) {
 
 // 获取psb课程列表，并存入storage
 function get_psb() {
-    chrome.storage.sync.get(["psb_course_list"], (data) => {
-        if (!data.psb_course_list) {
-            var psb_course_list = new CourseCodeList();
+    chrome.storage.sync.get(["psb_list", "course_code_list"], (data) => {
+        if (!data.psb_list) {
+            var psb_list = new CourseCodeList();
             var dates = document.querySelectorAll(".categoryname");
-            dates.forEach(function (date) {
+            if (data.course_code_list) {
+                var course_code_list = courseCodeListFromStorage(data.course_code_list);
+            }else{
+                var course_code_list = new CourseCodeList();
+            }
+            for (let i = 0; i < dates.length; i++) {
+                let date = dates[i];
                 if (date.innerText == "2024-25") {
                     var course_div = date.parentNode.previousElementSibling.firstElementChild;
                     var title = course_div.innerText;
+                    if (course_code_list.findCourseByTitle(title)) {
+                        console.log("already added:", title);
+                        continue;
+                    }
                     var code = title.substring(0, 8);
                     var detail = title.substring(9);
                     var url = course_div.href;
                     var course = new Course(title, code, detail, url);
-                    psb_course_list.addCourse(course);
+                    psb_list.addCourse(course);
                 }
-            });
-            chrome.storage.sync.set({ psb_course_list: psb_course_list });
-            console.log("psb:", psb_course_list);
+            }
+            chrome.storage.sync.set({ psb_list: psb_list });
+            console.log("psb:", psb_list);
         }
     });
 }
